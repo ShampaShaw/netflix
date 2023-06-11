@@ -23,5 +23,25 @@ router.post("/register", async (req,res) => {      //use post for creating somet
 
 }) 
 
+//login
+
+router.post("/login", async (req,res) => {
+    try {
+        const user = await User.findOne({ email: req.body.email }); //find the person by email which is registered
+        !user && res.status(401).json("Wrong password or Username!")
+
+        const bytes  = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY); //checking the password by bcrypt it
+        const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
+
+        originalPassword !== req.body.password && 
+            res.status(401).json("Wrong password or username!") // if registeredpassword not equal to originalPassword then send 401
+
+            res.status(200).json(user);
+
+    } catch (err) {
+        res.status(500).json(err)
+    }
+})
+
 module.exports = router;
 
