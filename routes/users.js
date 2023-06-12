@@ -51,8 +51,8 @@ router.get("/find/:id", async(req,res) => {
    //anyone can reach the information of user so we don't need to verify the token
         try {                                               
            const user = await User.findById(req.params.id)
-           const { password, ...info } = user._doc
-            res.status(200).json(info);
+           const { password,...info } = user._doc
+            res.status(200).json({info});
         } catch (err) {
             res.status(500).json(err);
         }
@@ -64,7 +64,7 @@ router.get("/", verify, async(req,res) => {
     if(req.user.isAdmin){  
         try {                                               
            const users = query ? await User.find().limit(10) /*find only last 10 user*/ : await User.find() //get all users
-            res.status(200).json(user);
+            res.status(200).json(users);
         } catch (err) {
             res.status(500).json(err);
         }
