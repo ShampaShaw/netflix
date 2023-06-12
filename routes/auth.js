@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const User = require("../models/User");
 const CryptoJS = require("crypto-js");
+const jwt = require("jsonwebtoken");
 
 //REGISTRATION
 
@@ -36,7 +37,15 @@ router.post("/login", async (req,res) => {
         originalPassword !== req.body.password && 
             res.status(401).json("Wrong password or username!") // if registeredpassword not equal to originalPassword then send 401
 
-            res.status(200).json(user);
+            const accessToken = jwt.sign(
+                { id: user._id, isAdmin: user.isAdmin}, //get the user_id and admin
+                process.env.SECRET_KEY,
+                {expiresIn: "5d"} //sign in get expires in 5d
+            );    
+
+            const { password, ...info } = user._doc; //its not show password only give information
+
+            res.status(200).json({ ...info, accessToken });
 
     } catch (err) {
         res.status(500).json(err)
