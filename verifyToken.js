@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 //verify the token then we move to the next if everything is going good
 
 function verify(req,res, next){
-    const authHeader = req.body.token;
+    const authHeader = req.headers.token;
     if(authHeader){
         const token = authHeader.split(" ")[1];
 

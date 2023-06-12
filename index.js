@@ -3,7 +3,8 @@ const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
-const authRoutes = require("./routes/auth")
+const authRoutes = require("./routes/auth");
+const userRoutes = require("./routes/users");
 dotenv.config();
 
 mongoose.connect(process.env.MONGO_URL, {
@@ -17,6 +18,7 @@ app.use(bodyParser.urlencoded({ limit: '30mb', extended: true}));
 
 
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
 app.listen(5000, () => {
     console.log("Server is running");
