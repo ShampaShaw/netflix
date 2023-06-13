@@ -63,7 +63,7 @@ router.get("/", verify, async(req,res) => {
     const query = req.query.new;
     if(req.user.isAdmin){  
         try {                                               
-           const users = query ? await User.find().limit(10) /*find only last 10 user*/ : await User.find() //get all users
+           const users = query ? await User.find().sort({ _id: -1})/*to get latest 10 users */.limit(10) /*find only last 10 user*/ : await User.find() //get all users
             res.status(200).json(users);
         } catch (err) {
             res.status(500).json(err);
@@ -73,5 +73,43 @@ router.get("/", verify, async(req,res) => {
     }
 })
 //GET USER STATS (NO. OF USER PER MONTH)
+
+router.get("/stats", async(req,res) => {
+    const today = new Date();
+    const lastYear = today.setFullYear(today.setFullYear() - 1);
+
+    const monthsArray = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+    ];
+
+    try {
+        const data = await User.aggregate([
+            {
+                $project: {
+                    month: { $month: "$createdAt"} //aggregate the month give the month in which it is created
+                }
+            }, {
+                $group: { //group our document
+                    _id: "$month", 
+                    total: {$sum:1} //total number of registration
+                }
+            }
+        ]) ;
+        res.status(200).json(data)
+    } catch (err) {
+       console.log(err);
+    }
+})
 
 module.exports = router
