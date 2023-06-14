@@ -43,5 +43,27 @@ router.get("/:id", verify, async(req,res) => {  //get movie by id(/:id)
         }
 })
 
+//GET RANDOM
+router.get("/random", verify, async(req,res) => {  //get random movie or series by using type by id(/:id)
+    const type = req.query.type;
+    let movie
+    try {      
+        if( type === "series") {
+            movie = await Movie.aggregate([
+                { $match : { isSeries /*from Movie.js */: true}},  //give all series
+                { $sample: { size:1 }}   //give only one sample series
+            ])
+        } else {
+            movie = await Movie.aggregate([
+                { $match : { isSeries /*from Movie.js */: false}},  //give all movies
+                { $sample: { size:1 }}   //give only one sample movies
+            ])
+        }
+        res.status(200).json(movie);
+    } catch(err) {
+        res.status(500).json(err);
+    }
+})
+
 
 module.exports = router
