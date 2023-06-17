@@ -27,7 +27,7 @@ router.delete("/:id", verify, async(req,res) => {
             await List.findByIdAndDelete(req.params.id);  //delete the list 
             res.status(201).json("The list has been deleted");
         } catch(err) {
-            console.log(err)
+            res.status(500).json(err)
         }
     } else {
         res.status(403).json("You are not allowed");   
@@ -45,14 +45,15 @@ router.get("/", verify, async(req,res) => {
         if(typeQuery){    //if there is series or movies
             if(genreQuery){
                 list = await List.aggregate([
+                    { $sample: {size: 10} }, //return item of 10
                     { $match: { type: typeQuery, genre: genreQuery } } , // match the type of query and genre then send to the 10 general sample
-                    { $sample: {size: 1} }, //return item of 10
                 ])
             }
             else { // if no genre
-                list : await List.aggregate([
+                list = await List.aggregate([
+                    { $sample: { size:10}}   ,
                     { $match: { type: typeQuery}} ,
-                    { $sample: { size:1}}   
+                    
                 ])
             }
         } 
