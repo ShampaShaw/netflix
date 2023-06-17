@@ -51,12 +51,12 @@ router.delete("/:id", verify, async(req,res) => {  //get movie by id(/:id)
 
 
 //GET
-router.get("/:id", verify, async(req,res) => {  //get movie by id(/:id)
+router.get("/find/:id", verify, async(req,res) => {  //get movie by id(/:id)
         try {      
             const movie = await Movie.findById(req.params.id)          //if you are not an admin then u can still watch the movies
             res.status(200).json(movie);
         } catch(err) {
-           console.log(err);
+           res.status(500).json(err);
         }
 })
 
@@ -79,6 +79,20 @@ router.get("/random", verify, async(req,res) => {  //get random movie or series 
         res.status(200).json(movie);
     } catch(err) {
         res.status(500).json(err);
+    }
+})
+
+//GET ALL
+router.get("/", verify, async(req,res) => {  //get all movies u are an admin
+    if( req.user.isAdmin){  
+        try {      
+            const movies = await Movie.find()          
+            res.status(200).json(movies.reverse()); //reverse the array and send the last array
+        } catch(err) {
+            res.status(500).json(err);
+        }
+    } else {
+        res.status(403).json("You are not allowed");
     }
 })
 
