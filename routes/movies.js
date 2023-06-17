@@ -18,11 +18,28 @@ router.post("/", verify, async(req,res) => {
     }
 })
 
+//UPDATE
+router.put("/:id", verify, async(req,res) => {//update movie by id
+    if( req.user.isAdmin){  
+
+        try {      
+            const updatedMovie = new Movie.findByIdAndUpdate(req.params.id,{
+                $set: req.body,
+            },{ new: true});
+            res.status(201).json(updatedMovie);
+        } catch(err) {
+            res.status(500).json(err);
+        }
+    } else {
+        res.status(403).json("You are not allowed");   //not updated
+    }
+})
+
 //DELETE
 router.delete("/:id", verify, async(req,res) => {  //get movie by id(/:id)
     if( req.user.isAdmin){  
         try {      
-            await Movie.findByIdAndDelete(req.params.id)          //update the movie by id and set new data insid  
+            await Movie.findByIdAndDelete(req.params.id)          //update the movie by id and set new data inside
             res.status(200).json("movie has been deleted");
         } catch(err) {
             res.status(500).json(err);
@@ -39,7 +56,7 @@ router.get("/:id", verify, async(req,res) => {  //get movie by id(/:id)
             const movie = await Movie.findById(req.params.id)          //if you are not an admin then u can still watch the movies
             res.status(200).json(movie);
         } catch(err) {
-            res.status(500).json(err);
+           console.log(err);
         }
 })
 
