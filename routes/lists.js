@@ -20,7 +20,53 @@ router.post("/", verify, async(req,res) => {
 
 //DELETE
 
+router.delete("/:id", verify, async(req,res) => {
+    if( req.user.isAdmin){  
+
+        try {      
+            await List.findByIdAndDelete(req.params.id);  //delete the list 
+            res.status(201).json("The list has been deleted");
+        } catch(err) {
+            console.log(err)
+        }
+    } else {
+        res.status(403).json("You are not allowed");   
+    }
+})
+
 //GET LIST
+
+router.get("/", verify, async(req,res) => {
+    const typeQuery = req.query.type;
+    const genreQuery = req.query.genre;
+    let list = [];
+
+    try{
+        if(typeQuery){    //if there is series or movies
+            if(genreQuery){
+                list = await List.aggregate([
+                    { $match: { type: typeQuery, genre: genreQuery } } , // match the type of query and genre then send to the 10 general sample
+                    { $sample: {size: 1} }, //return item of 10
+                ])
+            }
+            else { // if no genre
+                list : await List.aggregate([
+                    { $match: { type: typeQuery}} ,
+                    { $sample: { size:1}}   
+                ])
+            }
+        } 
+        else {  //else return random lists
+            list = await List.aggregate([{ $sample: {size: 10}}]) //return sample list of 10 items
+
+        }
+
+        res.status(200).json(list);
+
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
 
 
 module.exports = router

@@ -68,12 +68,12 @@ router.get("/random", verify, async(req,res) => {  //get random movie or series 
         if( type === "series") {
             movie = await Movie.aggregate([
                 { $match : { isSeries /*from Movie.js */: true}},  //give all series
-                { $sample: { size:1 }}   //give only one sample series
+                { $sample: { size:10 }}   //give only one sample series
             ])
         } else {
             movie = await Movie.aggregate([
                 { $match : { isSeries /*from Movie.js */: false}},  //give all movies
-                { $sample: { size:1 }}   //give only one sample movies
+                { $sample: { size:10 }}   //give only one sample movies
             ])
         }
         res.status(200).json(movie);
