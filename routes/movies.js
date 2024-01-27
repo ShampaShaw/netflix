@@ -26,7 +26,7 @@ router.put("/:id", verify, async(req,res) => {//update movie by id
             const updatedMovie = new Movie.findByIdAndUpdate(req.params.id,{
                 $set: req.body,
             },{ new: true});
-            res.status(201).json(updatedMovie);
+            res.status(200).json(updatedMovie);
         } catch(err) {
             res.status(500).json(err);
         }
