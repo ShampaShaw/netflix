@@ -45,7 +45,7 @@ router.post("/login", async (req,res) => {
 
             const { password, ...info } = user._doc; //its not show password only give information
 
-            res.status(200).json({ ...info, accessToken });
+            res.status(200).json({ ...info, accessToken });  //...info contains all the information
 
     } catch (err) {
         res.status(500).json(err)
