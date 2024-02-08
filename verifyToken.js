@@ -12,7 +12,7 @@ function verify(req,res, next){
         jwt.verify(token,process.env.SECRET_KEY, (err, user) => {
             if(err) res.status(403).json("Token is not valid or expired")
             req.user = user
-            next();                                                 // we can go to the actual root if there is no error
+            next()                                               // we can go to the actual root if there is no error
         })
     }
     else {

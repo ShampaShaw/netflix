@@ -7,6 +7,8 @@ const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/users");
 const movieRoutes = require("./routes/movies");
 const listRoutes = require("./routes/lists");
+const bodyParser = require("body-parser");
+
 dotenv.config();
 
 mongoose.connect(process.env.MONGO_URL, {
