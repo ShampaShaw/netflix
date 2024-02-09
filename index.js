@@ -3,20 +3,32 @@ const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
+const cors = require("cors");
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/users");
 const movieRoutes = require("./routes/movies");
 const listRoutes = require("./routes/lists");
-const bodyParser = require("body-parser");
+
 
 dotenv.config();
+app.use(cors());
 
-mongoose.connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    //useCreateIndex : true,
-}).then(() => console.log("connected")) //if connected console.log connected
-.catch((err) => console.log(err));//if not connected console.log err
+const PORT = process.env.PORT ;
+
+async function connectToDatabase() {
+    try {
+        
+        await mongoose.connect(process.env.MONGO_URL, {
+        });
+        console.log(`Connected to MongoDB successfully! 🎉 ${mongoose.connection.host}`)
+    }
+        catch (error) {
+        console.error('Error connecting to MongoDB:', error);
+        process.exit(1);
+    }
+}
+
+connectToDatabase();
 
 app.use(bodyParser.json({ limit: '30mb', extended: true}));
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true}));
@@ -27,6 +39,10 @@ app.use("/api/users", userRoutes);
 app.use("/api/movies", movieRoutes);
 app.use("/api/lists", listRoutes);
 
-app.listen(5000, () => {
-    console.log("Server is running");
+app.get("/", (req, res) => {   
+    res.send("Welcome to Netflix API");
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is running on ${PORT}`);
 })
