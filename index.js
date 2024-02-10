@@ -17,12 +17,12 @@ const PORT = process.env.PORT ;
 
 async function connectToDatabase() {
     try {
-        
         await mongoose.connect(process.env.MONGO_URL, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
         });
-        console.log(`Connected to MongoDB successfully! 🎉 ${mongoose.connection.host}`)
-    }
-        catch (error) {
+        console.log(`Connected to MongoDB successfully! 🎉 ${mongoose.connection.host}`);
+    } catch (error) {
         console.error('Error connecting to MongoDB:', error);
         process.exit(1);
     }
