@@ -11,7 +11,15 @@ const listRoutes = require("./routes/lists");
 
 
 dotenv.config();
-app.use(cors());
+app.use(cors(
+    {
+        origin: "http://localhost:3000",
+        credentials: true
+    },{
+        origin: "http://localhost:4000",
+        credentials: true
+    }
+));
 
 const PORT = process.env.PORT ;
 
@@ -20,6 +28,7 @@ async function connectToDatabase() {
         await mongoose.connect(process.env.MONGO_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
+            
         });
         console.log(`Connected to MongoDB successfully! 🎉 ${mongoose.connection.host}`);
     } catch (error) {
