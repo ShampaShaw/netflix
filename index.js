@@ -12,13 +12,7 @@ const listRoutes = require("./routes/lists");
 
 dotenv.config();
 app.use(cors(
-    {
-        origin: "http://localhost:3000",
-        credentials: true
-    },{
-        origin: "http://localhost:4000",
-        credentials: true
-    }
+
 ));
 
 const PORT = process.env.PORT ;
