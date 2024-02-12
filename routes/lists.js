@@ -14,7 +14,7 @@ router.post("/", verify, async(req,res) => {
             console.log(err)
         }
     } else {
-        res.status(403).json("You are not allowed");   
+        res.status(404).json("You are not allowed");   
     }
 })
 
@@ -30,7 +30,7 @@ router.delete("/:id", verify, async(req,res) => {
             res.status(500).json(err)
         }
     } else {
-        res.status(403).json("You are not allowed");   
+        res.status(404).json("You are not allowed");   
     }
 })
 
