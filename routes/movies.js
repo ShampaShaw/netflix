@@ -14,7 +14,7 @@ router.post("/", verify, async(req,res) => {
             res.status(500).json(err);
         }
     } else {
-        res.status(403).json("You are not allowed");   //not updated
+        res.status(404).json("You are not allowed");   //not updated
     }
 })
 
@@ -31,7 +31,7 @@ router.put("/:id", verify, async(req,res) => {//update movie by id
             res.status(500).json(err);
         }
     } else {
-        res.status(403).json("You are not allowed");   //not updated
+        res.status(404).json("You are not allowed");   //not updated
     }
 })
 
@@ -45,7 +45,7 @@ router.delete("/:id", verify, async(req,res) => {  //get movie by id(/:id)
             res.status(500).json(err);
         }
     } else {
-        res.status(403).json("You are not allowed");   //not updated
+        res.status(404).json("You are not allowed");   //not updated
     }
 })
 
@@ -98,7 +98,7 @@ router.get("/", verify, async(req,res) => {  //get all movies u are an admin
             res.status(500).json(err);
         }
     } else {
-        res.status(403).json("You are not allowed");
+        res.status(404).json("You are not allowed");
     }
 })
 

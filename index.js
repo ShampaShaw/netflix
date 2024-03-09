@@ -11,9 +11,7 @@ const listRoutes = require("./routes/lists");
 
 
 dotenv.config();
-app.use(cors(
-
-));
+app.use(cors());
 
 const PORT = process.env.PORT ;
 
