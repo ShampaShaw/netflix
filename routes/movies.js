@@ -52,12 +52,18 @@ router.delete("/:id", verify, async(req,res) => {  //get movie by id(/:id)
 
 //GET
 router.get("/find/:id", verify, async(req,res) => {  //get movie by id(/:id)
-        try {      
+    if( req.user){      
+    try {      
             const movie = await Movie.findById(req.params.id)          //if you are not an admin then u can still watch the movies
             res.status(200).json(movie);
+            return movie;
         } catch(err) {
            res.status(500).json(err);
         }
+    }
+    else{
+        res.status(403).json("You are not allowed");
+    }
 })
 
 //GET RANDOM
