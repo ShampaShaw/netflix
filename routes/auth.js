@@ -5,52 +5,71 @@ const jwt = require("jsonwebtoken");
 
 //REGISTRATION
 
-router.post("/register", async (req,res) => {      //use post for creating something
-        const newUser = new User({
-            username: req.body.username,
-            email: req.body.email,
-            password: CryptoJS.AES.encrypt(
-                req.body.password, 
-                process.env.SECRET_KEY
-                ).toString(),
-        })
+router.post("/register", async (req, res) => {
+    try {
+        const { username, email, password } = req.body;
 
-        try {
-            const user = await newUser.save() //here save the user who is registered
-            res.status(201).json(user)
-        }catch(err) {
-          res.status(500).json(err) // if not save then show error
+        // Check if user with the given email already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json("User with this email already exists");
         }
 
-}) 
+        // Encrypt the password
+        const encryptedPassword = CryptoJS.AES.encrypt(
+            password,
+            process.env.SECRET_KEY
+        ).toString();
+
+        // Create a new user instance
+        const newUser = new User({
+            username,
+            email,
+            password: encryptedPassword,
+        });
+
+        // Save the new user
+        const user = await newUser.save();
+        res.status(201).json(user);
+    } catch (err) {
+        console.error("Error occurred during registration:", err); // Log the error for debugging purposes
+        res.status(500).json("Internal Server Error");
+    }
+});
+
 
 //login
 
-router.post("/login", async (req,res) => {
+router.post("/login", async (req, res) => {
     try {
-        const user = await User.findOne({ email: req.body.email }); //find the person by email which is registered
-        !user && res.status(401).json("Wrong password or Username!")
+        const user = await User.findOne({ email: req.body.email });
 
-        const bytes  = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY); //checking the password by bcrypt it
+        if (!user) {
+            return res.status(401).json("Wrong Email!");
+        }
+
+        const bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY);
         const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
 
-        originalPassword !== req.body.password && 
-            res.status(401).json("Wrong password or username!") // if registeredpassword not equal to originalPassword then send 401
+        if (originalPassword !== req.body.password) {
+            return res.status(401).json("Wrong password or username!");
+        }
 
-            const accessToken = jwt.sign(
-                { id: user._id, isAdmin: user.isAdmin}, //get the user_id and admin
-                process.env.SECRET_KEY,
-                {expiresIn: "5d"} //sign in get expires in 5d
-            );    
+        const accessToken = jwt.sign(
+            { id: user._id, isAdmin: user.isAdmin },
+            process.env.SECRET_KEY,
+            { expiresIn: "5d" }
+        );
 
-            const { password, ...info } = user._doc; //its not show password only give information
+        const { password, ...info } = user._doc;
 
-            res.status(200).json({ ...info, accessToken });  //...info contains all the information
-
+        return res.status(200).json({ ...info, accessToken });
     } catch (err) {
-        res.status(500).json(err)
+        console.error("Error occurred during login:", err); // Log the error for debugging purposes
+        return res.status(500).json("Internal Server Error");
     }
-})
+});
+
 
 module.exports = router;
 
