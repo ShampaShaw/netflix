@@ -20,7 +20,7 @@ router.post("/", verify, async(req,res) => {
 
 //UPDATE
 router.put("/:id", verify, async(req,res) => {//update movie by id
-    if( req.user.isAdmin){  
+    if( req.user?.isAdmin){  
 
         try {      
             const updatedMovie = new Movie.findByIdAndUpdate(req.params.id,{
@@ -90,7 +90,7 @@ router.get("/random", verify, async(req,res) => {  //get random movie or series 
 
 //GET ALL
 router.get("/", verify, async(req,res) => {  //get all movies u are an admin
-    if( req.user.isAdmin){  
+    if( req.user?.isAdmin){  
         try {      
             const movies = await Movie.find()          
             res.status(200).json(movies.reverse()); //reverse the array and send the last array
